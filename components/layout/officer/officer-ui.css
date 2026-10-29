@@ -1,0 +1,206 @@
+/* Officer-only sizing. No Citizen/public page or header-background overrides. */
+.officer-portal-root {
+  font-size: 13px;
+  line-height: 1.55;
+}
+.officer-portal-root
+  :where(
+    .text-xs,
+    .text-sm,
+    .text-base,
+    .text-\[10px\],
+    .text-\[11px\],
+    .text-\[12px\],
+    .text-\[13px\],
+    .text-\[0\.8rem\]
+  ) {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.officer-portal-root h1 {
+  font-size: 24px;
+  line-height: 1.2;
+}
+.officer-portal-root :is(h2, h3, [data-slot="card-title"]) {
+  font-size: 16px;
+  line-height: 1.35;
+}
+.officer-portal-root :is(label, legend) {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.officer-portal-root :is(th, td) {
+  padding-block: 0.875rem;
+}
+.officer-portal-root th {
+  font-size: 12px;
+}
+.officer-portal-root td {
+  font-size: 13px;
+}
+.officer-portal-root nav[aria-label="Officer navigation"] a {
+  min-height: 48px;
+  font-size: 13px;
+}
+
+/* Preserve icon-only actions, toggles and map controls at their intended sizes. */
+.officer-portal-root
+  :is(button, a[data-slot="button"]):not(
+    :where(
+      .leaflet-container *,
+      [role="checkbox"],
+      [role="switch"],
+      [role="radio"],
+      :is(
+        .size-6,
+        .size-7,
+        .size-8,
+        .size-9,
+        .size-10,
+        .size-11,
+        .size-12,
+        [data-slot="dialog-close"]
+      ),
+      [data-slot="select-trigger"]
+    )
+  ) {
+  min-height: 44px;
+  height: auto;
+  padding: 0.5rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 13px;
+  line-height: 1.5;
+  gap: 0.5rem;
+}
+.officer-portal-root
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+        [type="hidden"]
+      ),
+    select,
+    textarea,
+    [data-slot="select-trigger"]
+  ) {
+  min-height: 44px;
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 0.625rem;
+  padding-block: 0.5rem;
+  /* Keep existing horizontal padding so input icons remain aligned. */
+}
+.officer-portal-root
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+        [type="hidden"]
+      ),
+    select,
+    [data-slot="select-trigger"]
+  ) {
+  height: 44px;
+}
+.officer-portal-root :is(button, a[data-slot="button"]) span {
+  font-size: inherit;
+}
+.officer-portal-root textarea {
+  min-height: 112px;
+}
+.officer-portal-root :is(input, select, textarea, button, a):focus-visible {
+  outline: 2px solid #1267e8;
+  outline-offset: 3px;
+}
+.officer-portal-root [aria-invalid="true"] {
+  border-color: #c63c3c;
+}
+
+/* Base UI popups are portalled outside the shell; scope to its presence. */
+body:has(.officer-portal-root)
+  :is(
+    [data-slot="select-content"],
+    [data-slot="dialog-content"],
+    [data-slot="dropdown-menu-content"]
+  ) {
+  font-size: 13px;
+  line-height: 1.5;
+}
+body:has(.officer-portal-root)
+  :is([data-slot="select-item"], [data-slot="dropdown-menu-item"]) {
+  min-height: 40px;
+  font-size: 13px;
+  padding-block: 0.5rem;
+}
+body:has(.officer-portal-root)
+  [data-slot="dialog-content"]
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea,
+    [data-slot="select-trigger"],
+    [data-slot="button"]:not(
+      :is(
+        .size-6,
+        .size-7,
+        .size-8,
+        .size-9,
+        .size-10,
+        .size-11,
+        .size-12,
+        [data-slot="dialog-close"]
+      )
+    )
+  ) {
+  min-height: 44px;
+  font-size: 13px;
+}
+body:has(.officer-portal-root)
+  [data-slot="dialog-content"]
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    [data-slot="select-trigger"],
+    [data-slot="button"]:not(
+      :is(
+        .size-6,
+        .size-7,
+        .size-8,
+        .size-9,
+        .size-10,
+        .size-11,
+        .size-12,
+        [data-slot="dialog-close"]
+      )
+    )
+  ) {
+  height: 44px;
+}
+.officer-portal-root .leaflet-container {
+  font-family: inherit;
+  font-size: 12px;
+}
+.officer-portal-root .leaflet-control-attribution {
+  font-size: 11px;
+  line-height: 1.4;
+}
+@media (max-width: 639px) {
+  .officer-portal-root
+    :is(button, a[data-slot="button"]):not(
+      :where(
+        .leaflet-container *,
+        :is(
+          .size-6,
+          .size-7,
+          .size-8,
+          .size-9,
+          .size-10,
+          .size-11,
+          .size-12,
+          [data-slot="dialog-close"]
+        ),
+        [role="checkbox"],
+        [role="switch"],
+        [role="radio"],
+        [data-slot="select-trigger"]
+      )
+    ) {
+    padding-inline: 1rem;
+  }
+}
