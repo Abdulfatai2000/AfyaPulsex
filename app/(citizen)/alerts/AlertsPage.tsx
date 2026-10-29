@@ -154,70 +154,63 @@ export default function AlertsPage({
       <section className="al-main-section" aria-labelledby="official-alerts-title">
         <h2 id="official-alerts-title" className="sr-only">Official Public Health Alerts</h2>
         <AlertFilters
-        query={query}
-        onQueryChange={handleQueryChange}
-        category={category}
-        onCategoryChange={handleCategoryChange}
-        range={range}
-        onRangeChange={handleRangeChange}
-        disabled={loading && !feed.records.length}
-      />
+          query={query}
+          onQueryChange={handleQueryChange}
+          category={category}
+          onCategoryChange={handleCategoryChange}
+          range={range}
+          onRangeChange={handleRangeChange}
+          resultCount={filtered.length}
+        />
 
-      {loading && !feed.records.length ? (
-        <AlertSkeleton />
-      ) : error ? (
-        <AlertErrorState onRetry={handleRetry} />
-      ) : (
-        <div className="al-layout">
-          <section className="al-left" aria-label="Health alerts list">
-            <HealthAlertList
-              alerts={visible}
-              selectedId={selectedAlert?.id}
-              onSelect={handleSelectAlert}
-              page={safePage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              onClearFilters={handleClearFilters}
-              hasActiveFilters={
-                query.trim().length > 0 ||
-                category !== "all" ||
-                range !== "all"
-              }
-              asOf={feed.asOf}
-            />
+        {loading && !feed.records.length ? (
+          <AlertSkeleton />
+        ) : error ? (
+          <AlertErrorState onRetry={handleRetry} />
+        ) : (
+          <div className="al-layout">
+            <section className="al-left" aria-label="Health alerts list">
+              <HealthAlertList
+                alerts={visible}
+                selected={selectedAlert?.id}
+                onSelect={handleSelectAlert}
+                page={safePage}
+                pages={totalPages}
+                onPage={handlePageChange}
+              />
 
-            {mobileDetail && (
-              <div className="al-mobile-detail">
+              {mobileDetail && (
+                <div className="al-mobile-detail">
+                  <AlertDetails
+                    alert={selectedAlert}
+                    onBack={handleBack}
+                    demo={false}
+                  />
+                </div>
+              )}
+            </section>
+
+            <aside className="al-right" aria-label="Selected health alert">
+              {allPublished.length === 0 ? null : filtered.length === 0 ? (
+                <AlertEmptyState />
+              ) : selectedAlert ? (
                 <AlertDetails
                   alert={selectedAlert}
-                  onBack={handleBack}
+                  onBack={() => setSelectedId(null)}
                   demo={false}
                 />
-              </div>
-            )}
-          </section>
+              ) : (
+                <div className="al-detail-card">
+                  <h3 className="al-select-title">Select an alert</h3>
 
-          <aside className="al-right" aria-label="Selected health alert">
-            {allPublished.length === 0 ? null : filtered.length === 0 ? (
-              <AlertEmptyState />
-            ) : selectedAlert ? (
-              <AlertDetails
-                alert={selectedAlert}
-                onBack={() => setSelectedId(null)}
-                demo={false}
-              />
-            ) : (
-              <div className="al-detail-card">
-                <h3 className="al-select-title">Select an alert</h3>
-
-                <p className="al-muted">
-                  Choose an alert from the list to view full details.
-                </p>
-              </div>
-            )}
-          </aside>
-        </div>
-      )}
+                  <p className="al-muted">
+                    Choose an alert from the list to view full details.
+                  </p>
+                </div>
+              )}
+            </aside>
+          </div>
+        )}
       </section>
     </div>
   );
