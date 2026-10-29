@@ -1,0 +1,860 @@
+/* Citizen Profile & Settings (Phase 8). .pf- prefixed styles follow the
+   AfyaPulse design language used by dashboard/vitals/my-health/alerts. */
+.pf-workspace {
+  color: #08214a;
+  min-width: 0;
+}
+.pf-form-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.pf-workspace * {
+  box-sizing: border-box;
+}
+.pf-workspace :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #1267e8;
+  outline-offset: 3px;
+}
+
+.pf-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+.pf-eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  color: #1267e8;
+  font-weight: 700;
+  margin: 0;
+}
+.pf-title {
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  margin: 0;
+  color: #08214a;
+}
+.pf-header p {
+  font-size: 14px;
+  color: #53677f;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.pf-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  margin-bottom: 22px;
+  border: 1px solid #d8e7f6;
+  border-radius: 12px;
+  background: #edf5ff;
+  color: #344e70;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.pf-preview > svg {
+  flex-shrink: 0;
+  color: #1267e8;
+  margin-top: 1px;
+}
+.pf-preview strong {
+  font-weight: 650;
+  color: #08214a;
+}
+
+/* Desktop workspace: secondary nav + content panel. */
+.pf-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+.pf-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: sticky;
+  top: 24px;
+}
+.pf-nav-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-left: 3px solid transparent;
+  background: transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: #344e70;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+.pf-nav-button svg {
+  flex-shrink: 0;
+  color: #7d93b0;
+  transition: color 0.15s;
+}
+.pf-nav-button:hover {
+  background: #f2f7ff;
+}
+.pf-nav-button[aria-current="true"] {
+  background: #eaf3ff;
+  color: #095dcf;
+  font-weight: 700;
+  border-left-color: #1267e8;
+}
+.pf-nav-button[aria-current="true"] svg {
+  color: #1267e8;
+}
+
+/* Mobile: tappable settings menu. */
+.pf-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pf-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #dce7f4;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px #08214a04;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.pf-menu-item:hover {
+  border-color: #bfd4ee;
+}
+.pf-menu-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: #eff6ff;
+  color: #1267e8;
+}
+.pf-menu-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.pf-menu-body {
+  flex: 1;
+  min-width: 0;
+}
+.pf-menu-body strong {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 650;
+  color: #08214a;
+}
+.pf-menu-body span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: #53677f;
+  line-height: 1.6;
+}
+.pf-menu-chevron {
+  flex-shrink: 0;
+  color: #a3b4cc;
+}
+
+.pf-mobile-back {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border: 1px solid #dce7f4;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  color: #095dcf;
+  cursor: pointer;
+}
+
+/* Content panel + cards. */
+.pf-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.pf-panel-section[hidden] {
+  display: none;
+}
+.pf-section-head h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+  color: #08214a;
+}
+.pf-section-head p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #53677f;
+  line-height: 1.7;
+}
+
+.pf-card {
+  background: #fff;
+  border: 1px solid #dce7f4;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px #08214a04;
+  padding: 22px;
+  min-width: 0;
+}
+.pf-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.pf-card-head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #08214a;
+}
+.pf-card-head p {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: #53677f;
+  line-height: 1.7;
+}
+.pf-card-subhead {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #08214a;
+}
+
+.pf-channel-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+.pf-channel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pf-channel span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #53677f;
+}
+.pf-fieldset {
+  border: none;
+  margin: 0;
+  padding: 16px 0;
+}
+.pf-fieldset + .pf-fieldset {
+  border-top: 1px solid #eef3f9;
+}
+.pf-fieldset legend {
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #08214a;
+}
+.pf-fieldset .pf-muted {
+  margin-top: 6px;
+}
+
+/* Settings rows (title/description left, control right). */
+.pf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+}
+.pf-row + .pf-row {
+  border-top: 1px solid #eef3f9;
+}
+.pf-row strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #08214a;
+}
+.pf-row span {
+  display: block;
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: #53677f;
+  line-height: 1.6;
+}
+
+/* Switch control. */
+.pf-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  background: #cdd9ea;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.15s;
+}
+.pf-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px #08214a33;
+  transition: transform 0.15s;
+}
+.pf-switch[aria-checked="true"] {
+  background: #1267e8;
+}
+.pf-switch[aria-checked="true"]::after {
+  transform: translateX(18px);
+}
+.pf-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Form fields. */
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+}
+.pf-field-full {
+  grid-column: 1 / -1;
+}
+.pf-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #08214a;
+}
+.pf-field .pf-field-optional {
+  font-weight: 500;
+  color: #7d93b0;
+  margin-left: 4px;
+  font-size: 11.5px;
+}
+.pf-field input,
+.pf-field select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d4e2f1;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  color: #08214a;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.pf-field input:focus,
+.pf-field select:focus {
+  border-color: #1267e8;
+  box-shadow: 0 0 0 3px #1267e820;
+}
+.pf-field input[aria-invalid="true"],
+.pf-field select[aria-invalid="true"] {
+  border-color: #c63c3c;
+  box-shadow: 0 0 0 3px #c63c3c1a;
+}
+.pf-field input:disabled,
+.pf-field select:disabled {
+  background: #f3f6fb;
+  color: #6b7f9c;
+  cursor: not-allowed;
+}
+.pf-hint {
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: #53677f;
+  line-height: 1.6;
+}
+.pf-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #c63c3c;
+  line-height: 1.5;
+}
+
+/* Buttons. */
+.pf-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.pf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+.pf-btn-primary {
+  background: #1267e8;
+  color: #fff;
+}
+.pf-btn-primary:hover {
+  background: #0957c9;
+}
+.pf-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.pf-btn-secondary {
+  background: #fff;
+  color: #0d3f92;
+  border-color: #d4e2f1;
+}
+.pf-btn-secondary:hover {
+  background: #f2f7ff;
+}
+.pf-btn-ghost {
+  background: transparent;
+  color: #1267e8;
+}
+.pf-btn-ghost:hover {
+  background: #eff6ff;
+}
+.pf-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid #dce7f4;
+  background: #fff;
+  color: #53677f;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+.pf-btn-icon:hover {
+  background: #ffeded;
+  color: #c63c3c;
+  border-color: #f3cdcd;
+}
+
+/* Status / feedback text. */
+.pf-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.pf-status-success {
+  background: #e7f6ef;
+  color: #106c46;
+}
+.pf-status-error {
+  background: #fdeeee;
+  color: #a32626;
+}
+.pf-status-info {
+  background: #edf5ff;
+  color: #0d3f92;
+}
+.pf-status-warn {
+  background: #fff3df;
+  color: #7a4d00;
+}
+.pf-status > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pf-muted {
+  font-size: 12.5px;
+  color: #53677f;
+  line-height: 1.7;
+}
+
+/* Health profile list manager. */
+.pf-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 4px;
+  border-top: 1px solid #eef3f9;
+}
+.pf-list-item:first-of-type {
+  border-top: none;
+}
+.pf-list-item strong {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #08214a;
+}
+.pf-list-item small {
+  display: block;
+  color: #6b7f9c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.pf-empty-label {
+  padding: 14px 0;
+  font-size: 13px;
+  color: #7d93b0;
+  line-height: 1.6;
+}
+.pf-add-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 12px;
+}
+.pf-add-row input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d4e2f1;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  color: #08214a;
+  outline: none;
+}
+.pf-add-row input:focus {
+  border-color: #1267e8;
+  box-shadow: 0 0 0 3px #1267e820;
+}
+.pf-add-row input[aria-invalid="true"] {
+  border-color: #c63c3c;
+  box-shadow: 0 0 0 3px #c63c3c1a;
+}
+.pf-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d4e2f1;
+  background: #fff;
+  color: #0d3f92;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.pf-add-btn:hover {
+  background: #f2f7ff;
+}
+.pf-med-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr auto;
+  gap: 10px;
+  align-items: start;
+}
+.pf-med-grid input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d4e2f1;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  color: #08214a;
+  outline: none;
+}
+.pf-med-grid input:focus {
+  border-color: #1267e8;
+  box-shadow: 0 0 0 3px #1267e820;
+}
+.pf-med-grid input[aria-invalid="true"] {
+  border-color: #c63c3c;
+  box-shadow: 0 0 0 3px #c63c3c1a;
+}
+.pf-med-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 44px;
+}
+.pf-med-actions .pf-btn {
+  width: 100%;
+}
+
+/* Inline confirmation for sensitive changes. */
+.pf-confirm {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #f0d9a8;
+  border-radius: 12px;
+  background: #fff8e9;
+}
+.pf-confirm strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: #08214a;
+}
+.pf-confirm p {
+  margin: 6px 0 12px;
+  font-size: 12.5px;
+  color: #6d5a2e;
+  line-height: 1.6;
+}
+.pf-confirm-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pf-confirm-actions .pf-btn-primary {
+  background: #c63c3c;
+}
+.pf-confirm-actions .pf-btn-primary:hover {
+  background: #a32626;
+}
+
+/* Segmented choices (units, language). */
+.pf-segmented {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pf-segmented label {
+  position: relative;
+}
+.pf-segmented input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.pf-segmented span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 16px;
+  border: 1px solid #d4e2f1;
+  border-radius: 10px;
+  background: #fff;
+  color: #344e70;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+.pf-segmented input:checked + span {
+  background: #1267e8;
+  border-color: #1267e8;
+  color: #fff;
+}
+.pf-segmented input:disabled + span {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Help & Support rows. */
+.pf-help-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 4px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pf-help-row + .pf-help-row {
+  border-top: 1px solid #eef3f9;
+}
+.pf-help-row .pf-menu-icon {
+  width: 38px;
+  height: 38px;
+}
+.pf-help-row .pf-menu-body strong {
+  font-size: 14px;
+}
+.pf-help-row .pf-menu-body span {
+  font-size: 12.5px;
+}
+
+/* Reduced-motion preferences are real on this page for preview. */
+@media (prefers-reduced-motion: reduce) {
+  .pf-workspace * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Mobile first: menu is the default; panel below a back button. */
+@media (max-width: 991px) {
+  .pf-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .pf-nav {
+    display: none;
+  }
+  .pf-panel {
+    display: flex;
+  }
+  .pf-mobile-back {
+    display: inline-flex;
+  }
+  .pf-card {
+    padding: 18px;
+  }
+  .pf-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pf-med-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (min-width: 992px) {
+  .pf-menu {
+    display: none;
+  }
+}
+@media (max-width: 359px) {
+  .pf-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pf-actions .pf-btn {
+    width: 100%;
+  }
+}
+.pf-help-item + .pf-help-item {
+  border-top: 1px solid #e5edf7;
+}
+.pf-help-row[aria-expanded="true"] .pf-menu-chevron {
+  transform: rotate(90deg);
+}
+.pf-help-panel {
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #e5edf7;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: #52647e;
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.pf-help-panel[hidden] {
+  display: none;
+}
+.pf-help-panel h4 {
+  color: #183153;
+  font-weight: 650;
+}
+.pf-help-panel p + p {
+  margin-top: 12px;
+}
+.pf-faq details + details {
+  border-top: 1px solid #e5edf7;
+}
+.pf-faq summary {
+  padding: 12px 0;
+  cursor: pointer;
+  color: #183153;
+  font-weight: 600;
+}
+.pf-faq details p {
+  padding-bottom: 12px;
+}
+
+.pf-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.pf-photo-avatar {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+}
+.pf-photo-controls {
+  min-width: 0;
+  flex: 1;
+}
+.pf-photo-controls .pf-actions {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+@media (max-width: 600px) {
+  .pf-photo-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .pf-photo-controls {
+    width: 100%;
+  }
+}
