@@ -1,0 +1,634 @@
+/* Scoped onboarding integration: keep the Phase 1 app shell unchanged elsewhere. */
+.ap-citizen:has(.ap-onboarding) .ap-citizen-sidebar,
+.ap-citizen:has(.ap-onboarding) .ap-citizen-mobile-nav,
+.ap-citizen:has(.ap-onboarding) .ap-citizen-header-label,
+.ap-citizen:has(.ap-onboarding) .ap-citizen-shortcuts {
+  display: none;
+}
+.ap-citizen:has(.ap-onboarding) .ap-citizen-mobile-brand {
+  display: block;
+}
+.ap-citizen:has(.ap-onboarding) .ap-citizen-workspace {
+  margin-left: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+.ap-citizen:has(.ap-onboarding) .ap-citizen-header {
+  min-height: 80px;
+  padding-inline: max(24px, calc((100vw - 1056px) / 2));
+}
+.ap-citizen:has(.ap-onboarding) .ap-citizen-content {
+  padding: 36px 24px;
+  max-width: 1040px;
+  width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+}
+.ap-onboarding {
+  color: #08214a;
+}
+.ap-onboarding :is(input, select, textarea, button, summary, a):focus-visible {
+  outline: 3px solid #1267e8;
+  outline-offset: 3px;
+}
+.ob-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  font-size: 12px;
+  color: #536986;
+  padding: 0 12px;
+  margin-bottom: 24px;
+}
+.ob-topline > span:first-child {
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  font-weight: 700;
+  color: #1267e8;
+}
+.ob-stepper {
+  margin: 0 auto 30px;
+  max-width: 760px;
+}
+.ob-stepper ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ob-stepper li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+  color: #526986;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.ob-stepper li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  background: #d4e2f4;
+  top: 16px;
+  left: calc(50% + 23px);
+  width: calc(100% - 46px);
+}
+.ob-stepper li[data-complete]::after {
+  background: #1267e8;
+}
+.ob-step-circle {
+  border: 1px solid #cdddf1;
+  background: #eaf2fc;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 650;
+}
+.ob-step-circle svg {
+  width: 16px;
+  height: 16px;
+}
+.ob-stepper li[aria-current] {
+  font-weight: 750;
+  color: #095dcf;
+}
+.ob-stepper li[aria-current] .ob-step-circle {
+  background: #1267e8;
+  color: white;
+  border-color: #1267e8;
+  box-shadow: 0 0 0 5px #e5effe;
+}
+.ob-stepper li[data-complete] .ob-step-circle {
+  color: #1267e8;
+  border-color: #a4c4f3;
+  background: #e7f1ff;
+}
+.ob-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  border: 1px solid #dce7f4;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 35px #08214a05;
+  padding: 40px;
+  gap: 40px;
+}
+.ob-card-main {
+  min-width: 0;
+}
+.ob-heading {
+  margin-bottom: 28px;
+}
+.ob-heading h1 {
+  font-size: 27px;
+  font-weight: 750;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+.ob-heading > p {
+  font-size: 13px;
+  color: #526986;
+  line-height: 1.8;
+  margin-top: 10px;
+}
+.ob-fields {
+  display: grid;
+  gap: 22px;
+}
+.ob-field {
+  min-width: 0;
+}
+.ob-field > label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
+.ob-field :is(input, select, textarea) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #cdddf0;
+  border-radius: 8px;
+  background: white;
+  color: #08214a;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 12px;
+  min-height: 46px;
+  box-sizing: border-box;
+}
+.ob-field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+.ob-field :is(input, textarea)::placeholder {
+  color: #637994;
+  font-size: 12px;
+}
+.ob-field [aria-invalid="true"] {
+  border-color: #c63c3c;
+}
+.ob-hint {
+  font-size: 11px;
+  color: #536986;
+  line-height: 1.75;
+  margin-top: 7px;
+}
+.ob-error {
+  font-size: 12px;
+  line-height: 1.75;
+  color: #b12d2d;
+  margin-top: 8px;
+}
+.ob-optional-note {
+  border-left: 3px solid #20bfd0;
+  padding: 10px 14px;
+  background: #effafd;
+  border-radius: 0 8px 8px 0;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #365f76;
+}
+.ob-side-panel {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(150deg, #f0f7ff, #e9f3ff);
+  border-radius: 14px;
+  padding: 36px 22px;
+  margin-top: 4px;
+}
+.ob-illustration {
+  width: 98px;
+  height: 98px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, white, #c3ddff);
+  color: #1267e8;
+  border: 8px solid #e4f0ff;
+  box-shadow: 0 8px 22px #1267e810;
+  margin-bottom: 24px;
+}
+.ob-illustration svg {
+  width: 48px;
+  height: 48px;
+  stroke-width: 1.6;
+}
+.ob-illustration-1 {
+  background: radial-gradient(circle at 30% 25%, white, #b7e9f3);
+  color: #087f9f;
+}
+.ob-illustration-2 {
+  background: radial-gradient(circle at 30% 25%, white, #ddd2fb);
+  color: #7550c3;
+}
+.ob-side-panel h2 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.4;
+  max-width: 190px;
+}
+.ob-side-panel > p {
+  font-size: 12px;
+  color: #526986;
+  line-height: 1.9;
+  margin-top: 14px;
+}
+.ob-side-mark {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  line-height: 1.6;
+  color: #426586;
+  margin-top: 32px;
+}
+.ob-side-mark svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.ob-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid #e5edf7;
+  margin-top: 32px;
+  padding-top: 22px;
+}
+.ob-actions button {
+  min-height: 46px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.ob-actions svg {
+  width: 16px;
+  height: 16px;
+}
+.ob-back {
+  background: #eaf3ff;
+  color: #095dcf;
+}
+.ob-next {
+  margin-left: auto;
+  background: #1267e8;
+  color: white;
+}
+.ob-next:hover {
+  background: #0957c9;
+}
+.ob-back:hover {
+  background: #ddeafe;
+}
+.ob-skip {
+  color: #095dcf;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.ob-location-option > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+  border: 1px solid #d3e0ef;
+  border-radius: 8px;
+  min-height: 46px;
+  padding: 10px;
+  color: #5d718a;
+  background: #f2f6fb;
+  font-size: 12px;
+  cursor: not-allowed;
+}
+.ob-location-option > button > svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.ob-inline-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #536986;
+}
+.ob-inline-note svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ob-consent {
+  display: grid;
+  gap: 20px;
+}
+.ob-consent-card {
+  padding: 22px;
+  border: 1px solid #d7e4f4;
+  border-radius: 12px;
+  background: #fff;
+}
+.ob-community-choice {
+  background: #f8fbff;
+}
+.ob-consent-title {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.ob-consent-title > svg {
+  width: 22px;
+  height: 22px;
+  color: #1267e8;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.ob-consent-title h2 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.ob-badge {
+  color: #42678d;
+  font-size: 10px;
+  font-weight: 650;
+}
+.ob-consent-card > p {
+  font-size: 12px;
+  line-height: 1.85;
+  color: #46607e;
+}
+.ob-choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+  margin: 18px 0 12px;
+  padding: 10px 0;
+  font-size: 12px;
+  line-height: 1.9;
+  font-weight: 550;
+}
+.ob-choice input {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: #1267e8;
+  cursor: pointer;
+}
+.ob-policy-placeholders {
+  border-top: 1px solid #e1eaf5;
+  margin-top: 18px;
+  padding-top: 14px;
+}
+.ob-consent-card > .ob-choice-state {
+  color: #08214a;
+  margin-bottom: 10px;
+}
+.ob-consent-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.9;
+  color: #536986;
+}
+.ob-consent-footer svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: #1267e8;
+  margin-top: 2px;
+}
+.ob-session-note {
+  color: #536986;
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: center;
+  margin: 22px 12px 0;
+}
+.ob-completion-card {
+  display: block;
+  max-width: 700px;
+  margin-inline: auto;
+  text-align: center;
+}
+.ob-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ob-success-icon {
+  display: grid;
+  place-items: center;
+  width: 100px;
+  height: 100px;
+  color: #098ca7;
+  background: radial-gradient(circle, #d4f5f9, #ecfbfd);
+  border-radius: 50%;
+  margin-bottom: 26px;
+}
+.ob-success-icon svg {
+  width: 58px;
+  height: 58px;
+  stroke-width: 1.6;
+}
+.ob-complete-lead {
+  font-size: 17px;
+  font-weight: 650;
+  line-height: 1.6;
+}
+.ob-complete > p:not(.ob-complete-lead) {
+  font-size: 13px;
+  color: #526986;
+  line-height: 1.9;
+  margin-top: 12px;
+}
+.ob-complete-summary {
+  display: grid;
+  gap: 14px;
+  text-align: left;
+  margin: 28px 0 8px;
+}
+.ob-complete-summary li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.ob-complete-summary svg {
+  width: 18px;
+  height: 18px;
+  color: #12825b;
+  flex-shrink: 0;
+}
+.ob-complete .ob-preview-notice {
+  background: #f3f7fd;
+  border: 1px solid #e0eaf7;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 11px;
+}
+.ob-review-button {
+  color: #095dcf;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: 12px;
+  min-height: 44px;
+  font-size: 12px;
+  margin-top: 10px;
+}
+@media (max-width: 1023px) {
+  .ob-card {
+    grid-template-columns: minmax(0, 1fr) 210px;
+    gap: 28px;
+    padding: 28px;
+  }
+  .ob-side-panel {
+    padding: 28px 16px;
+  }
+  .ob-heading h1 {
+    font-size: 25px;
+  }
+}
+@media (max-width: 767px) {
+  .ap-citizen:has(.ap-onboarding) {
+    background: white;
+  }
+  .ap-citizen:has(.ap-onboarding) .ap-citizen-header {
+    min-height: 68px;
+    padding-inline: 20px;
+  }
+  .ap-citizen:has(.ap-onboarding) .ap-citizen-content {
+    padding: 24px 20px calc(28px + env(safe-area-inset-bottom));
+  }
+  .ob-topline {
+    padding: 0;
+    margin-bottom: 24px;
+    font-size: 11px;
+  }
+  .ob-topline > span:first-child {
+    font-size: 8px;
+  }
+  .ob-stepper {
+    margin-bottom: 32px;
+  }
+  .ob-stepper li {
+    gap: 8px;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+  .ob-step-circle {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+  .ob-stepper li:not(:last-child)::after {
+    top: 13px;
+    left: calc(50% + 19px);
+    width: calc(100% - 38px);
+  }
+  .ob-step-label {
+    max-width: 55px;
+  }
+  .ob-card {
+    display: block;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+  }
+  .ob-side-panel {
+    display: none;
+  }
+  .ob-heading h1 {
+    font-size: 24px;
+  }
+  .ob-heading p {
+    font-size: 13px;
+  }
+  .ob-field :is(input, select, textarea) {
+    font-size: 16px;
+    min-height: 48px;
+  }
+  .ob-fields {
+    gap: 24px;
+  }
+  .ob-actions {
+    gap: 10px;
+    padding-top: 20px;
+    margin-top: 28px;
+  }
+  .ob-actions button {
+    min-height: 48px;
+  }
+  .ob-next {
+    flex: 1;
+  }
+  .ob-actions:has(.ob-skip) .ob-skip {
+    order: 3;
+    width: 100%;
+  }
+  .ob-actions:has(.ob-skip) .ob-back {
+    order: 1;
+  }
+  .ob-actions:has(.ob-skip) .ob-next {
+    order: 2;
+  }
+  .ob-consent-card {
+    padding: 18px 16px;
+  }
+  .ob-choice {
+    gap: 10px;
+    font-size: 12px;
+  }
+  .ob-consent-title {
+    gap: 10px;
+  }
+  .ob-consent-title h2 {
+    font-size: 16px;
+  }
+  .ob-session-note {
+    margin-inline: 0;
+    font-size: 10px;
+  }
+  .ob-complete .ap-button {
+    width: 100%;
+  }
+  .ob-completion-card .ob-heading h1 {
+    font-size: 27px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ap-onboarding * {
+    scroll-behavior: auto;
+  }
+}
