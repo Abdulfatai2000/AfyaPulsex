@@ -26,3 +26,9 @@ export async function listNotifications(
   const limit = safeLimit(opts?.limit);
   return Notification.find(query).sort({ sentAt: -1 }).limit(limit).lean();
 }
+
+export async function countUnreadNotifications(userId: string): Promise<number> {
+  await connectDB();
+  const filter = await accountRecordFilter(userId);
+  return Notification.countDocuments({ user: userId, readAt: null, ...filter });
+}
