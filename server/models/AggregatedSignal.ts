@@ -42,6 +42,13 @@ const AggregatedSignalSchema = new Schema(
 );
 
 AggregatedSignalSchema.index({ jurisdiction: 1, periodStart: -1 });
+AggregatedSignalSchema.index({
+  jurisdiction: 1,
+  metric: 1,
+  simulation: 1,
+  periodStart: -1,
+  periodEnd: 1,
+});
 
 export type AggregatedSignal = InferSchemaType<typeof AggregatedSignalSchema>;
 

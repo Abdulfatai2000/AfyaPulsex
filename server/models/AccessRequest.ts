@@ -57,6 +57,8 @@ const AccessRequestSchema = new Schema(
   { timestamps: true },
 );
 
+AccessRequestSchema.index({ status: 1, simulation: 1, requestedAt: -1 });
+
 export type AccessRequest = InferSchemaType<typeof AccessRequestSchema>;
 
 export const AccessRequest =
