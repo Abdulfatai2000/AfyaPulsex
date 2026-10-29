@@ -5,6 +5,15 @@ import { requireCitizen } from "@/server/auth/rbac";
 import { HealthEvent } from "@/server/models";
 import { insightGuidance, personalInsightInput, selectPersonalInsight } from "./personal-insight-content";
 
+// In-memory LRU-like cache keyed by citizen and report timestamp
+const insightCache = new Map<string, {
+  reportCount: number;
+  latestReportDate: string | null;
+  observation: string;
+  guidance: string;
+  source: "ai" | "fallback";
+}>();
+
 export async function getPersonalHealthInsight() {
   const session = await requireCitizen();
   const reports = await HealthEvent.find({ citizen: session.userId, ...await accountRecordFilter(session.userId) })
@@ -15,6 +24,12 @@ export async function getPersonalHealthInsight() {
     reportCount: reports.length,
     latestReportDate: reports[0].reportedAt?.toISOString() ?? null,
   };
+  const cacheKey = `${session.userId}:${reference.latestReportDate}:${reference.reportCount}`;
+  const cached = insightCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const fallback = { ...reference, observation: observations[1] ?? observations[0], guidance: insightGuidance[1], source: "fallback" as const };
   if (session.user.isDemo || !process.env.GROQ_API_KEY?.trim()) return fallback;
   try {
@@ -29,7 +44,14 @@ export async function getPersonalHealthInsight() {
       ],
     });
     if (response.choices[0]?.finish_reason !== "stop") return fallback;
-    return { ...reference, ...selectPersonalInsight(response.choices[0]?.message.content ?? "", observations), source: "ai" as const };
+    const result = { ...reference, ...selectPersonalInsight(response.choices[0]?.message.content ?? "", observations), source: "ai" as const };
+    // Bound memory cache to latest 200 sessions
+    if (insightCache.size > 200) {
+      const oldestKey = insightCache.keys().next().value;
+      if (oldestKey) insightCache.delete(oldestKey);
+    }
+    insightCache.set(cacheKey, result);
+    return result;
   } catch {
     // Never log provider errors: they can contain request data or credentials.
     return fallback;

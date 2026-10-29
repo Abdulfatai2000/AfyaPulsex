@@ -70,16 +70,16 @@ export async function getOfficerMapDataAction(
   const from = new Date(
     +to - Number(filters.timeRange.slice(0, -1)) * 86400000,
   );
-  const zones: MapZone[] = [];
-  for (const area of targets) {
-    if (!session.jurisdictionIds.includes(String(area._id))) continue;
+
+  const zonePromises = targets.map(async (area) => {
+    if (!session.jurisdictionIds.includes(String(area._id))) return null;
     // Reuse AggregatedSignal reads and current consent/threshold revalidation.
     // Exact fixed windows avoid summing overlapping persisted snapshots.
     const signals = await listSignals(String(area._id), from, to);
     const signal = signals.find(
       (row) => +row.periodStart === +from && +row.periodEnd === +to,
     );
-    if (!signal) continue;
+    if (!signal) return null;
     let coordinates = area.centroid?.coordinates;
     if (
       !coordinates ||
@@ -101,15 +101,15 @@ export async function getOfficerMapDataAction(
         console.warn(
           "[Officer map] Aggregate zone omitted: administrative centroid unavailable.",
         );
-        continue;
+        return null;
       }
     }
     // Existing legend buckets describe reporting volume, not disease severity.
     const activityLevel =
       signal.count >= 20 ? "high" : signal.count >= 5 ? "moderate" : "low";
     if (filters.severity !== "all" && activityLevel !== filters.severity)
-      continue;
-    zones.push({
+      return null;
+    return {
       zoneId: `zone-${area._id}`,
       name: area.name,
       lat: coordinates[1],
@@ -119,7 +119,9 @@ export async function getOfficerMapDataAction(
       reportCount: signal.count,
       topSymptom: null,
       suppressed: false,
-    });
-  }
-  return zones;
+    } as MapZone;
+  });
+
+  const resolved = await Promise.all(zonePromises);
+  return resolved.filter((zone): zone is MapZone => zone !== null);
 }
