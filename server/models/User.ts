@@ -62,6 +62,7 @@ const UserSchema = new Schema(
 );
 
 UserSchema.index({ demoSlot: 1 }, { unique: true, sparse: true });
+UserSchema.index({ role: 1, accountStatus: 1, emailVerified: 1 });
 
 export type User = InferSchemaType<typeof UserSchema>;
 

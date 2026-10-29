@@ -70,6 +70,9 @@ const HealthEventSchema = new Schema(
 );
 
 HealthEventSchema.index({ location: "2dsphere" });
+HealthEventSchema.index({ jurisdiction: 1, reportedAt: -1, simulation: 1 });
+HealthEventSchema.index({ citizen: 1, reportedAt: -1, simulation: 1 });
+HealthEventSchema.index({ citizen: 1, onsetAt: -1, simulation: 1 });
 
 export type HealthEvent = InferSchemaType<typeof HealthEventSchema>;
 

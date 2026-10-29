@@ -47,6 +47,8 @@ const VitalReadingSchema = new Schema(
   { timestamps: true },
 );
 
+VitalReadingSchema.index({ citizen: 1, takenAt: -1, simulation: 1 });
+
 export type VitalReading = InferSchemaType<typeof VitalReadingSchema>;
 
 export const VitalReading =

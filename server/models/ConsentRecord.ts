@@ -33,6 +33,8 @@ const ConsentRecordSchema = new Schema(
   { timestamps: true },
 );
 
+ConsentRecordSchema.index({ purpose: 1, simulation: 1, effectiveAt: -1 });
+
 export type ConsentRecord = InferSchemaType<typeof ConsentRecordSchema>;
 
 export const ConsentRecord =

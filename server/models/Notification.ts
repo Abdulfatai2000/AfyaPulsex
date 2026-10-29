@@ -35,6 +35,8 @@ const NotificationSchema = new Schema(
   { timestamps: true },
 );
 
+NotificationSchema.index({ user: 1, readAt: 1, sentAt: -1, simulation: 1 });
+
 export type Notification = InferSchemaType<typeof NotificationSchema>;
 
 export const Notification =

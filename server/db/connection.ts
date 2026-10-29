@@ -28,7 +28,9 @@ export async function connectDB(): Promise<typeof mongoose> {
   global.mongooseConn = mongoose
     .connect(uri, {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: 10,
+      minPoolSize: 2,
     })
     .catch((error: unknown) => {
       global.mongooseConn = undefined;

@@ -121,7 +121,7 @@ export async function getInvestigationSummaryAction(
 ): Promise<InvestigationSummaryCounts> {
   void stateId;
   const session = await requireApprovedOfficer();
-  const docs = (await listInvestigations()).filter(doc => doc.jurisdiction && session.jurisdictionIds.includes(String(doc.jurisdiction)));
+  const docs = await listInvestigations(session.jurisdictionIds);
   const counted: InvestigationSummaryCounts = {
     all: 0,
     active: 0,
@@ -144,7 +144,7 @@ export async function getInvestigationsAction(
   filters: InvestigationFilters,
 ): Promise<Investigation[]> {
   const session = await requireApprovedOfficer();
-  const docs = (await listInvestigations()).filter(doc => doc.jurisdiction && session.jurisdictionIds.includes(String(doc.jurisdiction)));
+  const docs = await listInvestigations(session.jurisdictionIds);
   return docs
     .map(toListItem)
     .filter((item) => statusMatchesTab(item.status, filters.tab));

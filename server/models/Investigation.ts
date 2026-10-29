@@ -77,6 +77,9 @@ const InvestigationSchema = new Schema(
   { timestamps: true },
 );
 
+InvestigationSchema.index({ jurisdiction: 1, status: 1, openedAt: -1, simulation: 1 });
+InvestigationSchema.index({ simulation: 1, openedAt: -1 });
+
 export type Investigation = InferSchemaType<typeof InvestigationSchema>;
 
 export const Investigation =

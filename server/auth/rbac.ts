@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Session } from "next-auth";
 import type { CitizenContext, OfficerContext, AdminContext } from "@/types";
 import { auth } from "./config";
@@ -5,15 +6,26 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/server/db/connection";
 import { User, OfficerProfile, Jurisdiction } from "@/server/models";
 
+export const getCachedSession = cache(async (): Promise<Session | null> => {
+  return auth();
+});
+
 export async function requireSession(): Promise<Session> {
-  const session = await auth();
+  const session = await getCachedSession();
   if (!session?.user?.id) redirect("/auth");
   return session;
 }
 
-async function checkAccountStatus(userId: string): Promise<{ active: boolean; suspendedUntil?: Date | null; reason?: string | null }> {
+/** Memoized user record lookup selecting all fields needed by RBAC in a single round-trip. */
+export const getCachedUser = cache(async (userId: string) => {
   await connectDB();
-  const user = await User.findById(userId).select("accountStatus suspendedUntil suspensionReason").lean();
+  return User.findById(userId)
+    .select("accountStatus suspendedUntil suspensionReason role emailVerified isDemo onboardingCompletedAt")
+    .lean();
+});
+
+async function checkAccountStatus(userId: string): Promise<{ active: boolean; suspendedUntil?: Date | null; reason?: string | null }> {
+  const user = await getCachedUser(userId);
   if (!user) return { active: false };
   if (user.accountStatus === "suspended") {
     if (user.suspendedUntil && new Date(user.suspendedUntil) > new Date()) {
@@ -21,6 +33,7 @@ async function checkAccountStatus(userId: string): Promise<{ active: boolean; su
     }
     // Suspension expired - auto-reactivate
     if (user.suspendedUntil && new Date(user.suspendedUntil) <= new Date()) {
+      await connectDB();
       await User.findByIdAndUpdate(userId, { accountStatus: "active", suspendedUntil: null });
       return { active: true };
     }
@@ -38,8 +51,7 @@ export async function requireVerifiedCitizen(): Promise<Session & CitizenContext
   if (!accountCheck.active) {
     redirect("/auth?suspended=1");
   }
-  await connectDB();
-  const user = await User.findById(session.user.id).select("role emailVerified isDemo").lean();
+  const user = await getCachedUser(session.user.id);
   if (!user || user.role !== "citizen") redirect("/auth");
   if (!user.emailVerified) {
     redirect(`/auth/verify-email?userId=${session.user.id}&email=${encodeURIComponent(session.user.email ?? "")}`);
@@ -52,41 +64,19 @@ export async function requireVerifiedCitizen(): Promise<Session & CitizenContext
   };
 }
 
-/** Normal Citizen pages and actions require completed onboarding, using live DB state. */
+/** Normal Citizen pages and actions require completed onboarding, using cached live DB state. */
 export async function requireCitizen(): Promise<Session & CitizenContext> {
   const session = await requireVerifiedCitizen();
-  const user = await User.findById(session.userId).select("onboardingCompletedAt").lean();
+  const user = await getCachedUser(session.userId);
   if (!user?.onboardingCompletedAt) redirect("/onboarding");
   return session;
 }
 
-export async function requireApprovedOfficer(): Promise<
-  Session & OfficerContext
-> {
-  const session = await requireSession();
-  const accountCheck = await checkAccountStatus(session.user.id);
-  if (!accountCheck.active) {
-    redirect("/auth?suspended=1");
-  }
+/** Memoized jurisdiction hierarchy traversal per server request. */
+export const getCachedJurisdictionHierarchy = cache(async (rootJurisdictionId: string): Promise<string[]> => {
   await connectDB();
-  const user = await User.findById(session.user.id).select("role isDemo").lean();
-  const officer = await OfficerProfile.findOne({
-    user: session.user.id,
-    simulation: user?.isDemo ? true : { $ne: true },
-  }).lean();
-  if (!officer) redirect("/officer/access-request");
-  if (
-    user?.role !== "officer" ||
-    officer.status !== "approved" ||
-    (officer.setupRequired && !officer.setupCompletedAt) ||
-    !officer.jurisdiction
-  )
-    redirect("/officer/verification");
-  const root = await Jurisdiction.findById(officer.jurisdiction)
-    .select("_id")
-    .lean();
-  if (!root) redirect("/officer/verification");
-  // Resolve the approved hierarchy from MongoDB, not mutable client/JWT claims.
+  const root = await Jurisdiction.findById(rootJurisdictionId).select("_id").lean();
+  if (!root) return [];
   const ids = new Set<string>([root._id.toString()]);
   let frontier = [root._id];
   while (frontier.length) {
@@ -98,26 +88,58 @@ export async function requireApprovedOfficer(): Promise<
       .map((child) => child._id);
     for (const id of frontier) ids.add(id.toString());
   }
+  return [...ids];
+});
+
+export const getCachedOfficerProfile = cache(async (userId: string, isDemo?: boolean) => {
+  await connectDB();
+  return OfficerProfile.findOne({
+    user: userId,
+    simulation: isDemo ? true : { $ne: true },
+  }).lean();
+});
+
+export async function requireApprovedOfficer(): Promise<
+  Session & OfficerContext
+> {
+  const session = await requireSession();
+  const accountCheck = await checkAccountStatus(session.user.id);
+  if (!accountCheck.active) {
+    redirect("/auth?suspended=1");
+  }
+  const user = await getCachedUser(session.user.id);
+  const officer = await getCachedOfficerProfile(session.user.id, user?.isDemo);
+  if (!officer) redirect("/officer/access-request");
+  if (
+    user?.role !== "officer" ||
+    officer.status !== "approved" ||
+    (officer.setupRequired && !officer.setupCompletedAt) ||
+    !officer.jurisdiction
+  )
+    redirect("/officer/verification");
+
+  const jurisdictionIds = await getCachedJurisdictionHierarchy(officer.jurisdiction.toString());
+  if (!jurisdictionIds.length) redirect("/officer/verification");
+
   return {
     ...session,
-    user: { ...session.user, role: "officer", isDemo: user.isDemo === true },
+    user: { ...session.user, role: "officer", isDemo: user?.isDemo === true },
     userId: session.user.id,
     role: "officer",
     officerProfileId: officer._id.toString(),
     capabilities: officer.capabilities,
-    jurisdictionIds: [...ids],
+    jurisdictionIds,
   };
 }
 
 export async function requireAdmin(): Promise<Session & AdminContext> {
-  const session = await auth();
+  const session = await getCachedSession();
   if (!session?.user?.id) redirect("/admin/login");
   const accountCheck = await checkAccountStatus(session.user.id);
   if (!accountCheck.active) {
     redirect("/admin/login?error=inactive");
   }
-  await connectDB();
-  const user = await User.findById(session.user.id).select("role isDemo").lean();
+  const user = await getCachedUser(session.user.id);
   if (!user || user.role !== "admin" || user.isDemo) {
     redirect("/admin/login?error=forbidden");
   }

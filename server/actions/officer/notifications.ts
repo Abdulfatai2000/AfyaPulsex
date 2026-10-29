@@ -3,7 +3,7 @@
 import { requireLiveOfficer as requireApprovedOfficer } from "@/server/auth/rbac";
 import { connectDB } from "@/server/db/connection";
 import { Notification } from "@/server/models";
-import { listNotifications } from "@/server/services/notifications";
+import { listNotifications, countUnreadNotifications } from "@/server/services/notifications";
 import { docIdString } from "@/server/lib/id-utils";
 import type { OfficerNotification } from "@/lib/services/officer/notifications";
 
@@ -53,11 +53,7 @@ export async function getOfficerNotificationsAction(
 
 export async function getUnreadNotificationCountAction(): Promise<number> {
   const session = await requireApprovedOfficer();
-  const docs = await listNotifications(session.userId, {
-    unreadOnly: true,
-    limit: 100,
-  });
-  return docs.length;
+  return countUnreadNotifications(session.userId);
 }
 
 /**

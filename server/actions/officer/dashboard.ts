@@ -45,7 +45,9 @@ async function fetchEvents(from: Date, to: Date, scope: Scope): Promise<EventSha
     simulation: { $ne: true },
   };
   if (scope) query.jurisdiction = scope;
-  return HealthEvent.find(query).lean() as unknown as Promise<EventShape[]>;
+  return HealthEvent.find(query)
+    .select("reportedAt maxSeverity symptoms.name jurisdiction citizen")
+    .lean() as unknown as Promise<EventShape[]>;
 }
 
 function changePercent(current: number, previous: number): number | null {
@@ -172,7 +174,7 @@ export async function getRecentAlertsAction(): Promise<AlertSummary[]> {
   await connectDB();
   const alerts = await PublicAlert.find({ status: "published", simulation: { $ne: true }, jurisdiction: { $in: session.jurisdictionIds } })
     .sort({ publishedAt: -1 })
-    .limit(8)
+    .select("title body level publishedAt createdAt").limit(8)
     .lean();
 
   return alerts.map((a) => ({
