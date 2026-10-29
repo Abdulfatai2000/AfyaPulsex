@@ -1,0 +1,80 @@
+.section {
+  min-width: 0;
+  width: 100%;
+  padding: 24px;
+  border: 1px solid #e3ecf7;
+  border-radius: 16px;
+  background: #fff;
+}
+.loader {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 20px 0;
+  color: #52647e;
+  font-size: 14px;
+  text-align: center;
+}
+.track {
+  position: relative;
+  width: 168px;
+  height: 40px;
+}
+.track::before {
+  content: "";
+  position: absolute;
+  inset: 19px 0 auto;
+  height: 2px;
+  background: #e3ecf7;
+}
+.mark {
+  position: absolute;
+  left: 0;
+  width: 36px;
+  height: 40px;
+  color: #1267e8;
+  background: #fff;
+  animation: travel 2.4s linear infinite;
+}
+@keyframes travel {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(132px);
+    opacity: 0;
+  }
+}
+.skeletons {
+  display: grid;
+  gap: 16px;
+}
+.cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.placeholder {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #e3ecf7;
+  border-radius: 12px;
+}
+@media (max-width: 640px) {
+  .section {
+    padding: 16px;
+  }
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mark {
+    animation: none;
+    transform: translateX(66px);
+  }
+}
