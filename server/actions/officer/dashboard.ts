@@ -174,7 +174,7 @@ export async function getRecentAlertsAction(): Promise<AlertSummary[]> {
   await connectDB();
   const alerts = await PublicAlert.find({ status: "published", simulation: { $ne: true }, jurisdiction: { $in: session.jurisdictionIds } })
     .sort({ publishedAt: -1 })
-    .limit(8)
+    .select("title body level publishedAt createdAt").limit(8)
     .lean();
 
   return alerts.map((a) => ({
