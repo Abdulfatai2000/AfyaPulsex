@@ -42,6 +42,8 @@ const PublicAlertSchema = new Schema(
   { timestamps: true },
 );
 
+PublicAlertSchema.index({ status: 1, simulation: 1, jurisdiction: 1, publishedAt: -1 });
+
 export type PublicAlert = InferSchemaType<typeof PublicAlertSchema>;
 
 export const PublicAlert =

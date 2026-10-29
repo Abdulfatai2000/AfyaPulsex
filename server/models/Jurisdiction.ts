@@ -42,6 +42,8 @@ const JurisdictionSchema = new Schema(
 );
 
 JurisdictionSchema.index({ centroid: "2dsphere" });
+JurisdictionSchema.index({ parent: 1 });
+JurisdictionSchema.index({ level: 1, parent: 1 });
 
 export type Jurisdiction = InferSchemaType<typeof JurisdictionSchema>;
 
