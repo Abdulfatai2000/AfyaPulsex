@@ -42,7 +42,7 @@ const eligibleCitizens = cache(async () => {
     { $project: { _id: 1 } },
   ]);
   return rows.map((row) => row._id);
-}
+});
 
 /** Counts only; no raw histories, free text, locations or identity leave MongoDB. */
 export async function aggregateWindow(
