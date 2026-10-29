@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import type { ReactNode } from "react";
 
 import { AlertDetails } from "@/components/citizen/alerts/AlertDetails";
@@ -25,31 +25,47 @@ import type {
 import { getAlertsAction } from "@/server/actions/citizen/alerts";
 const PAGE_SIZE = 5;
 
-export default function AlertsPage({ personalInsights }: { personalInsights: ReactNode }) {
+export default function AlertsPage({
+  personalInsights,
+  initialFeed,
+}: {
+  personalInsights: ReactNode;
+  initialFeed?: CitizenAlertFeed;
+}) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<AlertCategory | "all">("all");
   const [range, setRange] = useState<AlertDateRange>("all");
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialFeed);
   const [error, setError] = useState(false);
 
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mobileDetail, setMobileDetail] = useState(false);
 
-  const [feed, setFeed] = useState<CitizenAlertFeed>(emptyAlertFeed);
+  const [feed, setFeed] = useState<CitizenAlertFeed>(initialFeed ?? emptyAlertFeed);
+  const isFirstMount = useRef(true);
+
   const load = useCallback(() => {
     return getAlertsAction()
-      .then(setFeed)
+      .then((data) => {
+        setFeed(data);
+        setError(false);
+      })
       .catch(() => {
         setFeed(emptyAlertFeed);
         setError(true);
       })
       .finally(() => setLoading(false));
   }, []);
+
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      if (initialFeed) return;
+    }
     void load();
-  }, [load]);
+  }, [load, initialFeed]);
 
   const allPublished = useMemo(() => {
     return publishedAlerts(feed);
@@ -100,7 +116,7 @@ export default function AlertsPage({ personalInsights }: { personalInsights: Rea
     setMobileDetail(false);
   };
 
-  const handleSelect = (id: string) => {
+  const handleSelectAlert = (id: string) => {
     setSelectedId(id);
 
     if (
@@ -134,69 +150,43 @@ export default function AlertsPage({ personalInsights }: { personalInsights: Rea
     <div className="al-page">
       <AlertsHeader />
       {personalInsights}
-      <section aria-labelledby="public-health-alerts-title">
-      <h2 id="public-health-alerts-title">Public Health Alerts</h2>
 
-      {loading && (
+      <section className="al-main-section" aria-labelledby="official-alerts-title">
+        <h2 id="official-alerts-title" className="sr-only">Official Public Health Alerts</h2>
+        <AlertFilters
+        query={query}
+        onQueryChange={handleQueryChange}
+        category={category}
+        onCategoryChange={handleCategoryChange}
+        range={range}
+        onRangeChange={handleRangeChange}
+        disabled={loading && !feed.records.length}
+      />
+
+      {loading && !feed.records.length ? (
+        <AlertSkeleton />
+      ) : error ? (
+        <AlertErrorState onRetry={handleRetry} />
+      ) : (
         <div className="al-layout">
-          <div className="al-left">
-            <AlertSkeleton />
-          </div>
+          <section className="al-left" aria-label="Health alerts list">
+            <HealthAlertList
+              alerts={visible}
+              selectedId={selectedAlert?.id}
+              onSelect={handleSelectAlert}
+              page={safePage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onClearFilters={handleClearFilters}
+              hasActiveFilters={
+                query.trim().length > 0 ||
+                category !== "all" ||
+                range !== "all"
+              }
+              asOf={feed.asOf}
+            />
 
-          <div className="al-right">
-            <AlertSkeleton detail />
-          </div>
-        </div>
-      )}
-
-      {error && !loading && <AlertErrorState onRetry={handleRetry} />}
-
-      {!loading && !error && (
-        <div className="al-layout">
-          <section
-            className={`al-left ${
-              mobileDetail ? "al-left--mobile-detail" : ""
-            }`}
-            aria-label="Health alerts"
-          >
-            {!mobileDetail && (
-              <>
-                <AlertFilters
-                  query={query}
-                  onQueryChange={handleQueryChange}
-                  category={category}
-                  onCategoryChange={handleCategoryChange}
-                  range={range}
-                  onRangeChange={handleRangeChange}
-                  resultCount={filtered.length}
-                />
-
-                {allPublished.length === 0 ? <AlertEmptyState /> : filtered.length === 0 ? (
-                  <div className="al-filter-empty">
-                    <h3>No alerts match your filters.</h3>
-
-                    <p>Try adjusting your search or filter choices.</p>
-
-                    <button type="button" onClick={handleClearFilters}>
-                      Clear filters
-                    </button>
-                  </div>
-                ) : (
-                  <div className="al-list-wrap">
-                    <HealthAlertList
-                      alerts={visible}
-                      selected={selectedAlert?.id}
-                      onSelect={handleSelect}
-                      page={safePage}
-                      pages={totalPages}
-                      onPage={handlePageChange}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-
-            {mobileDetail && selectedAlert && (
+            {mobileDetail && (
               <div className="al-mobile-detail">
                 <AlertDetails
                   alert={selectedAlert}

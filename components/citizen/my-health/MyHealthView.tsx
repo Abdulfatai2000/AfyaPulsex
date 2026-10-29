@@ -1,5 +1,5 @@
 "use client";
-import { useState, type KeyboardEvent, useEffect } from "react";
+import { useState, type KeyboardEvent, useEffect, useMemo, useRef } from "react";
 import {
   Info,
   Search,
@@ -29,8 +29,10 @@ const tabs = ["Timeline", "Trends", "Insights"] as const;
 type Tab = (typeof tabs)[number];
 export function MyHealthView({
   approvedInsights,
+  initialData,
 }: {
   approvedInsights?: { asOf: string; range: DateRange; items: HealthInsight[] };
+  initialData?: MyHealthDataDTO;
 }) {
   const [tab, setTab] = useState<Tab>("Timeline");
   const [range, setRange] = useState<DateRange>("90");
@@ -40,11 +42,16 @@ export function MyHealthView({
   const [limit, setLimit] = useState(8);
   const [category, setCategory] = useState<TrendCategory>("Symptoms");
   const [vital, setVital] = useState<VitalType>("temperature");
-  const [data, setData] = useState<MyHealthDataDTO | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<MyHealthDataDTO | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
+  const isFirstMount = useRef(true);
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      if (initialData) return;
+    }
     async function load() {
       try {
         setLoading(true);
@@ -57,34 +64,39 @@ export function MyHealthView({
       }
     }
     load();
-  }, []);
+  }, [initialData]);
 
   const source = data ?? emptyMyHealth;
-  const period = periodData(source, range);
-  const all = timeline(source);
-  const items = timeline(period).filter((item) => {
-    if (
-      (type === "events" && item.kind !== "event") ||
-      (type === "vitals" && item.kind !== "vital")
-    )
-      return false;
-    if (
-      type === "vitals" &&
-      vitalFilter !== "all" &&
-      item.kind === "vital" &&
-      item.record.type !== vitalFilter
-    )
-      return false;
-    const text =
-      item.kind === "event"
-        ? [
-            ...symptoms(item.record),
-            ...(item.record.bodyAreas || []),
-            item.record.notes,
-          ].join(" ")
-        : vitalConfigs[item.record.type].label + " " + (item.record.note || "");
-    return text.toLowerCase().includes(query.trim().toLowerCase());
-  });
+  const period = useMemo(() => periodData(source, range), [source, range]);
+  const all = useMemo(() => timeline(source), [source]);
+  const items = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return timeline(period).filter((item) => {
+      if (
+        (type === "events" && item.kind !== "event") ||
+        (type === "vitals" && item.kind !== "vital")
+      )
+        return false;
+      if (
+        type === "vitals" &&
+        vitalFilter !== "all" &&
+        item.kind === "vital" &&
+        item.record.type !== vitalFilter
+      )
+        return false;
+      if (!normalized) return true;
+      const text =
+        item.kind === "event"
+          ? [
+              ...symptoms(item.record),
+              ...(item.record.bodyAreas || []),
+              item.record.notes,
+            ].join(" ")
+          : vitalConfigs[item.record.type].label + " " + (item.record.note || "");
+      return text.toLowerCase().includes(normalized);
+    });
+  }, [period, type, vitalFilter, query]);
+
   function clear() {
     setQuery("");
     setType("all");
@@ -127,7 +139,7 @@ return (
           </select>
         </label>
       </header>
-      {loading && (
+      {loading && !data && (
         <div className="mh-demo">
           <p><strong>Loading your health history...</strong></p>
         </div>

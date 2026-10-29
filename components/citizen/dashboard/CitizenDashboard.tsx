@@ -1,5 +1,5 @@
-﻿"use client";
-import { useState, useEffect } from "react";
+"use client";
+import { useState, useEffect, useRef, useTransition } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getDashboardAction } from "@/server/actions/citizen/dashboard";
@@ -9,13 +9,32 @@ import { HealthActivityChart } from "./HealthActivityChart";
 import { RecentSignals } from "./RecentSignals";
 import { CitizenLoading } from "../feedback/CitizenLoading";
 
-export function CitizenDashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+export function CitizenDashboard({ initialData }: { initialData?: DashboardData }) {
+  const [data, setData] = useState<DashboardData | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [range, setRange] = useState<DashboardRange>("1w");
+  const [isPending, startTransition] = useTransition();
+  const isFirstMount = useRef(true);
+
+  const handleRangeChange = (nextRange: DashboardRange) => {
+    setRange(nextRange);
+    startTransition(async () => {
+      try {
+        const result = await getDashboardAction(nextRange);
+        setData(result);
+        setError(null);
+      } catch {
+        setError("We couldn't load your dashboard. Please try again.");
+      }
+    });
+  };
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      if (initialData) return;
+    }
     async function load() {
       try {
         setLoading(true);
@@ -28,9 +47,9 @@ export function CitizenDashboard() {
       }
     }
     load();
-  }, [range]);
+  }, [range, initialData]);
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="db-dashboard">
         <header className="db-welcome">
@@ -56,7 +75,7 @@ export function CitizenDashboard() {
   const displayData = data ?? getEmptyDashboard(range);
 
   return (
-    <div className="db-dashboard">
+    <div className={`db-dashboard transition-opacity duration-150 ${isPending ? "opacity-75" : "opacity-100"}`}>
       <header className="db-welcome">
         <div>
           <p className="db-eyebrow">YOUR PERSONAL HEALTH OVERVIEW</p>
@@ -78,7 +97,7 @@ export function CitizenDashboard() {
       )}
       <HealthSummaryCards data={displayData} />
       <div className="db-details">
-        <HealthActivityChart data={displayData} range={range} onRangeChange={setRange} />
+        <HealthActivityChart data={displayData} range={range} onRangeChange={handleRangeChange} />
         <RecentSignals data={displayData} />
       </div>
     </div>

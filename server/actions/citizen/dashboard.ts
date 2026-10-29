@@ -10,8 +10,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export type DashboardRange = "1w" | "1m" | "3m";
 
-const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 function severityStatus(maxSeverity: number | null | undefined): string {
   if (!maxSeverity) return "Reported";
   if (maxSeverity <= 3) return "Mild";
@@ -111,8 +109,10 @@ export async function getDashboardAction(range: DashboardRange = "1w"): Promise<
 
   const rangeMs = getRangeMs(range);
   const from = new Date(Date.now() - rangeMs);
-  const events = await listHealthEvents(userId, { from, dateField: "onsetAt" });
-  const vitals = await listVitalReadings(userId, from, new Date());
+  const [events, vitals] = await Promise.all([
+    listHealthEvents(userId, { from, dateField: "onsetAt" }),
+    listVitalReadings(userId, from, new Date()),
+  ]);
 
   const temperature = vitals.find((v) => v.type === "temperature");
   const buckets = generateBuckets(range);

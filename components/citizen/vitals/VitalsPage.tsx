@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Plus } from "lucide-react";
 import { LatestVitalsCards } from "./LatestVitalsCards";
 import { RecentVitals } from "./RecentVitals";
@@ -11,16 +11,22 @@ import { emptyVitals } from "./demo-data";
 import type { VitalReading, VitalType } from "@/types/vitals";
 import { listVitalsAction, saveVitalAction } from "@/server/actions/citizen/vitals";
 import { CitizenLoading } from "../feedback/CitizenLoading";
-export function VitalsPage() {
+
+export function VitalsPage({ initialReadings }: { initialReadings?: VitalReading[] }) {
   const [confirmedReadings, setConfirmedReadings] = useState<
     VitalReading[] | null
-  >(null);
-  const [loading, setLoading] = useState(true);
+  >(initialReadings ?? null);
+  const [loading, setLoading] = useState(!initialReadings);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [quickType, setQuickType] = useState<VitalType | null>(null);
+  const isFirstMount = useRef(true);
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      if (initialReadings) return;
+    }
     async function load() {
       try {
         setLoading(true);
@@ -33,7 +39,7 @@ export function VitalsPage() {
       }
     }
     load();
-  }, []);
+  }, [initialReadings]);
 
   const readings = confirmedReadings ?? emptyVitals;
   const sorted = [...readings].sort(
@@ -44,7 +50,7 @@ export function VitalsPage() {
     return saveVitalAction(draft);
   }
 
-  if (loading) {
+  if (loading && !confirmedReadings) {
     return (
       <div className="vt-page">
         <div className="vt-main-grid">
