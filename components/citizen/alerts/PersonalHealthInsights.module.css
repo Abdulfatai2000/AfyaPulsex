@@ -1,0 +1,7 @@
+.section { margin: 24px 0 28px; }
+.card { margin-top: 12px; padding: 18px 20px; border: 1px solid #d8d5ee; border-left: 4px solid #7664b0; border-radius: 12px; background: #f8f7fc; }
+.heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.heading h3 { margin: 0; }
+.badge { padding: 3px 9px; border-radius: 20px; background: #eeebf8; color: #514080; font-size: 12px; }
+.card p { margin-top: 10px; }
+.disclaimer { border-top: 1px solid #e1ddef; padding-top: 10px; color: #5b6b84; }
