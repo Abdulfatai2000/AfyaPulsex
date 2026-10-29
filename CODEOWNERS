@@ -1,0 +1,17 @@
+# AfyaPulse CODEOWNERS
+# Team fills in the real GitHub handles for DEV1..DEV4 (placeholder usernames
+# below keep ownership lanes visible until then).
+
+/app/(citizen)/        @DEV1
+/app/(marketing)/      @DEV1
+/components/citizen/   @DEV1
+
+/app/(officer)/        @DEV2
+/components/officer/   @DEV2
+
+/server/db/            @DEV3
+/server/models/        @DEV3
+/server/services/      @DEV3 @DEV4
+
+/server/auth/          @DEV4
+/server/validation/    @DEV1 @DEV2 @DEV3 @DEV4
