@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Users, BadgeCheck, AlertTriangle, Clock, TrendingUp, ClipboardList } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-interface AdminStats {
+export interface AdminStats {
   totalCitizens: number;
   totalOfficers: number;
   pendingOfficerRequests: number;
@@ -13,7 +13,7 @@ interface AdminStats {
   unverifiedEmails: number;
 }
 
-interface RecentActivity {
+export interface RecentActivity {
   id: string;
   action: string;
   targetEmail: string;
@@ -21,13 +21,24 @@ interface RecentActivity {
   timestamp: string;
 }
 
-export function AdminDashboardClient() {
-  const [stats, setStats] = useState<AdminStats | null>(null);
-  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
-  const [loading, setLoading] = useState(true);
+export function AdminDashboardClient({
+  initialStats,
+  initialActivity,
+}: {
+  initialStats?: AdminStats;
+  initialActivity?: RecentActivity[];
+}) {
+  const [stats, setStats] = useState<AdminStats | null>(initialStats ?? null);
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>(initialActivity ?? []);
+  const [loading, setLoading] = useState(!initialStats);
   const [error, setError] = useState<string | null>(null);
+  const isFirstMount = useRef(true);
 
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      if (initialStats) return;
+    }
     async function load() {
       try {
         setLoading(true);
@@ -48,7 +59,7 @@ export function AdminDashboardClient() {
       }
     }
     load();
-  }, []);
+  }, [initialStats]);
 
   const statCards = stats ? [
     {
