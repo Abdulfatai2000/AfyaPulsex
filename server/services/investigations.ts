@@ -20,11 +20,17 @@ export async function openInvestigation(
 }
 
 export async function listInvestigations(
-  jurisdictionId?: string,
+  jurisdictionId?: string | string[],
 ): Promise<Investigation[]> {
   await connectDB();
   const query: QueryFilter<Investigation> = { simulation: { $ne: true } };
-  if (jurisdictionId) query.jurisdiction = jurisdictionId;
+  if (jurisdictionId) {
+    if (Array.isArray(jurisdictionId)) {
+      query.jurisdiction = { $in: jurisdictionId };
+    } else {
+      query.jurisdiction = jurisdictionId;
+    }
+  }
   return Investigation.find(query).sort({ openedAt: -1 }).lean();
 }
 

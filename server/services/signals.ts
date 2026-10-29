@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { connectDB } from "@/server/db/connection";
 import {
   HealthEvent,
@@ -13,7 +14,7 @@ import {
 import { Types } from "mongoose";
 
 /** Re-evaluate current authoritative consent, including later refusals/revocations. */
-async function eligibleCitizens() {
+const eligibleCitizens = cache(async () => {
   const version = communityPolicyVersion();
   if (!version) return [];
   const now = new Date();
