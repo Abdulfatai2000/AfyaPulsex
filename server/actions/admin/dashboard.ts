@@ -74,3 +74,4 @@ export async function getAdminDashboardDataAction(): Promise<AdminDashboardData>
     recentActivity,
   };
 }
+
